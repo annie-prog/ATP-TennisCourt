@@ -25,6 +25,6 @@ private:
     }
 public: 
     static void ClearTextFiles(const std::string& filename);
-    static bool areValidRelation(const std::string& relation);
+    static bool areValidRelation(const std::string& relation, std::unordered_map<std::string, std::string>& subordinateMap);
     static bool areValidRelationsFromFile(const std::string& filename);
 };

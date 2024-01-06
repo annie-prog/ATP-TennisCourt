@@ -1,14 +1,12 @@
 #include "FileUtils.hpp"
 
-std::unordered_map<std::string, std::string> subordinateMap; // map for all relations
-
 void FileUtils::ClearTextFiles(const std::string& filename) 
 {
     std::ofstream file(filename);
     file.close();
 }
 
-bool FileUtils::areValidRelation(const std::string& relation) 
+bool FileUtils::areValidRelation(const std::string& relation, std::unordered_map<std::string, std::string>& subordinateMap) 
 {
     std::vector<std::string> encounteredEmployees; // vector for all employees so we can check if we have encounter an employee more than once
 
@@ -57,6 +55,8 @@ bool FileUtils::areValidRelation(const std::string& relation)
 
 bool FileUtils::areValidRelationsFromFile(const std::string& filename) 
 {
+    std::unordered_map<std::string, std::string> subordinateMap;
+
     std::ifstream file(filename);
     if (!file.is_open()) 
     {
@@ -67,7 +67,7 @@ bool FileUtils::areValidRelationsFromFile(const std::string& filename)
     std::string relation;
     while (std::getline(file, relation)) 
     {
-        if (!areValidRelation(relation)) 
+        if (!areValidRelation(relation, subordinateMap)) 
         {
             std::cout << "Invalid relation: " << relation << std::endl;
             file.close();

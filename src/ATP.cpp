@@ -30,7 +30,7 @@ void ATP::readHierarchy(std::map<std::string, std::vector<std::string>>& relatio
     std::string line;
     while (std::getline(input, line))
     {
-        if (line == "end")
+        if (line == "")
         {
             break;
         }
@@ -58,7 +58,7 @@ void ATP::printToFile(std::istream& input)
     std::string line;
     while (std::getline(input, line))
     {
-        if (line == "end")
+        if (line == "")
         {
             break;
         }
@@ -93,8 +93,6 @@ Box* ATP::load(const std::string& objectName, const std::string& fileName)
             std::exit(-1);
         }
     }
-    this->name = objectName;
-
 
     std::map<std::string, std::vector<std::string>> relationships;
 
@@ -108,10 +106,12 @@ Box* ATP::load(const std::string& objectName, const std::string& fileName)
         if (FileUtils::areValidRelationsFromFile(fileName1))
         {
             readHierarchy(relationships, inputFile);
+            this->name = objectName;
             inputFile.close();
         }
         else
         {
+            FileUtils::ClearTextFiles(fileName1);
             return nullptr;
         } 
     }
@@ -126,6 +126,7 @@ Box* ATP::load(const std::string& objectName, const std::string& fileName)
         if(FileUtils::areValidRelationsFromFile(fileName))
         {
             readHierarchy(relationships, inputFile);
+            this->name = objectName;
             inputFile.close();
         }
         else
@@ -217,7 +218,7 @@ Box* ATP::findEmployee(Box* root, const std::string& element)
     return nullptr;
 }
 
-bool ATP::findEmployee(const std::string& objectName, const std::string& element)
+bool ATP::findEmployee(const std::string& element)
 {
     Box* result = findEmployee(root, element);
     if (result)
@@ -230,7 +231,7 @@ bool ATP::findEmployee(const std::string& objectName, const std::string& element
     }
 }
 
-void ATP::save(const std::string& objectName, const std::string& fileName)
+void ATP::save(const std::string& fileName)
 {
     if (fileName.empty())
     {
@@ -248,11 +249,9 @@ void ATP::save(const std::string& objectName, const std::string& fileName)
         printHierarchy(root, outputFile);
         outputFile.close();
     }
-
-    std::cout << objectName << " saved." << std::endl;
 }
 
-std::size_t ATP::numberOfChildren(const std::string &objectName, const std::string &x)
+std::size_t ATP::numberOfChildren(const std::string &element)
 {
     std::size_t numChildren = 0;
  
@@ -270,7 +269,7 @@ std::size_t ATP::numberOfChildren(const std::string &objectName, const std::stri
         {
             Box* p = q.front();
             q.pop();
-            if (p->data == x) 
+            if (p->data == element) 
             {
                 numChildren = static_cast<int>(p->children.size());
                 return numChildren;
@@ -284,7 +283,7 @@ std::size_t ATP::numberOfChildren(const std::string &objectName, const std::stri
     return numChildren;
 }
 
-std::size_t ATP::numEmployees(const std::string& objectName, Box* root)
+std::size_t ATP::numEmployees(Box* root)
 {
     if (!root)
     {
@@ -296,21 +295,21 @@ std::size_t ATP::numEmployees(const std::string& objectName, Box* root)
     {
         for (const auto& child : root->children)
         {
-            count += numEmployees(objectName, child);
+            count += numEmployees(child);
         }
     }
 
     return 1 + count;
 }
 
-std::size_t ATP::numEmployees(const std::string& objectName)
+std::size_t ATP::numEmployees()
 {
     if (!root)
     {
         return 0;
     }
 
-    return numEmployees(objectName, root);
+    return numEmployees(root);
 }
 
 std::vector<std::string> ATP::findPath(Box* current, const std::string& employeeName)
@@ -390,10 +389,21 @@ std::size_t ATP::sizeLongestPath(Box* current)
     return longestPath.size();
 }
 
-std::string ATP::manager(const std::string& objectName, const std::string& employeeName)
+std::string ATP::manager(const std::string& employeeName)
 {
     std::vector<std::string> path = findPath(root, employeeName);
+
+    if (path.empty())
+    {
+        return "";
+    }
+    
     std::size_t size = path.size();
+
+    if (employeeName == "CEO_to")
+    {
+        return employeeName;
+    }
     return path[size - 2];
 }
 
@@ -419,25 +429,26 @@ void ATP::getAllEmployeesHelper(Box* root, std::vector<std::string>& employees)
     }
 }
 
-std::size_t ATP::overloaded(const std::string& objectName)
+std::size_t ATP::overloaded()
 {
-    std::size_t count = 0;
-    if (!root)
-    {
-        std::cout << "Object not found." << std::endl;
-        return 0;
-    }
-
     std::vector<std::string> employees = getAllEmployees(root);
-    std::size_t size = employees.size();
-    employees.erase(employees.begin());
-    while (size >= 20)
+
+    std::size_t countEmployees = 0;
+
+    for (const auto& employee : employees)
     {
-        ++count;
-        --size;
+        std::size_t numberOfDirectChildren = numberOfChildren(employee);
+        std::size_t numberOfIndirectChildren = numIndirectEmployees(employee);
+
+        std::size_t numberOfChildren = numberOfDirectChildren + numberOfIndirectChildren;
+
+        if (numberOfChildren > 20)
+        {
+            ++countEmployees;
+        }
     }
 
-    return count;
+    return countEmployees;
 }
 
 void ATP::erase(Box*& root, const std::string &element)
@@ -446,7 +457,7 @@ void ATP::erase(Box*& root, const std::string &element)
     {
         return;
     }
-
+    
     auto it = std::find_if(root->children.begin(), root->children.end(),
         [element](const Box* child) { return child->data == element; });
 
@@ -471,7 +482,12 @@ void ATP::erase(Box*& root, const std::string &element)
     }
 }
 
-void ATP::hire(Box* root, const std::string& objectName, const std::string& employee, const std::string& newManager)
+void ATP::erase(const std::string &element)
+{
+    erase(root, element);
+}
+
+void ATP::hire(Box* root, const std::string& employee, const std::string& newManager)
 {
     Box* employeeNode = findEmployee(root, employee);
     Box* newManagerNode = findEmployee(root, newManager);
@@ -487,7 +503,12 @@ void ATP::hire(Box* root, const std::string& objectName, const std::string& empl
     }
 }
 
-std::size_t ATP::numIndirectEmployees(const std::string& objectName, Box* root, const std::string& manager)
+void ATP::hire(const std::string& employee, const std::string& newManager)
+{
+    hire(root, employee, newManager);
+}
+
+std::size_t ATP::numIndirectEmployees(Box* root, const std::string& manager)
 {
     Box* employeeNode = findEmployee(root, manager);
     if (!employeeNode)
@@ -497,30 +518,38 @@ std::size_t ATP::numIndirectEmployees(const std::string& objectName, Box* root, 
 
     std::size_t count = 0;
 
-    for (const auto& child : employeeNode->children)
+    std::queue<Box*> nodeQueue;
+    nodeQueue.push(employeeNode);
+
+    while (!nodeQueue.empty())
     {
-        count += numIndirectEmployees(objectName, child, manager);
-    
-        Box* grandchild = child;
-        while (grandchild != nullptr)
+        Box* currentNode = nodeQueue.front();
+        nodeQueue.pop();
+
+        for (const auto& child : currentNode->children)
         {
-            count += grandchild->children.size();
-            grandchild = grandchild->children.empty() ? nullptr : grandchild->children[0];
+            count += child->children.size();
+            nodeQueue.push(child);
         }
     }
 
     return count;
 }
 
-std::size_t ATP::salary(Box* root, const std::string& objectName, const std::string& employee)
+std::size_t ATP::numIndirectEmployees(const std::string& manager)
 {
-    std::size_t numberOfDirectChildren = numberOfChildren(objectName, employee);
-    std::size_t numberOfIndirectChildren = numIndirectEmployees(objectName, root, employee);
+    return numIndirectEmployees(root, manager);
+}
+
+std::size_t ATP::salary(const std::string& employee)
+{
+    std::size_t numberOfDirectChildren = numberOfChildren(employee);
+    std::size_t numberOfIndirectChildren = numIndirectEmployees(employee);
     std::size_t salary = 500 * numberOfDirectChildren + 50 * numberOfIndirectChildren; 
     return salary;
 }
 
-void ATP::incorporate(const std::string& objectName)
+void ATP::incorporate()
 {
     if (!root)
     {
@@ -528,10 +557,10 @@ void ATP::incorporate(const std::string& objectName)
         return;
     }
 
-    incorporateHierarchy(root, objectName);
+    incorporateHierarchy(root);
 }
 
-void ATP::incorporateHierarchy(Box* root, const std::string& objectName)
+void ATP::incorporateHierarchy(Box* root)
 {
     if (!root)
     {
@@ -540,7 +569,7 @@ void ATP::incorporateHierarchy(Box* root, const std::string& objectName)
 
     if (root->children.size() >= 2)
     {
-        std::string highestSalaryEmployee = findHighestSalaryEmployee(root, objectName);
+        std::string highestSalaryEmployee = findHighestSalaryEmployee(root);
 
         Box* newRoot = new Box(highestSalaryEmployee);
 
@@ -552,19 +581,19 @@ void ATP::incorporateHierarchy(Box* root, const std::string& objectName)
 
         for (auto& child : newRoot->children)
         {
-            incorporateHierarchy(child, objectName);
+            incorporateHierarchy(child);
         }
     }
     else
     {
         for (auto& child : root->children)
         {
-            incorporateHierarchy(child, objectName);
+            incorporateHierarchy(child);
         }
     }
 }
 
-std::string ATP::findHighestSalaryEmployee(Box* root, const std::string& objectName)
+std::string ATP::findHighestSalaryEmployee(Box* root)
 {
     if (!root || root->children.empty())
     {
@@ -575,8 +604,8 @@ std::string ATP::findHighestSalaryEmployee(Box* root, const std::string& objectN
 
     for (Box* employee : root->children)
     {
-        std::size_t salaryEmployee = salary(root, objectName, employee->data);
-        std::size_t salaryHighest = salary(root, objectName, highestSalaryEmployee->data);
+        std::size_t salaryEmployee = salary(employee->data);
+        std::size_t salaryHighest = salary(highestSalaryEmployee->data);
 
         if (salaryEmployee > salaryHighest ||
             (salaryEmployee == salaryHighest && employee->data < highestSalaryEmployee->data))
@@ -588,7 +617,7 @@ std::string ATP::findHighestSalaryEmployee(Box* root, const std::string& objectN
     return highestSalaryEmployee->data;
 }
 
-std::vector<std::string> ATP::atLevelRecursive(Box* root, std::size_t targetLevel, std::size_t currentLevel, const std::string& objectName)
+std::vector<std::string> ATP::atLevelRecursive(Box* root, std::size_t targetLevel, std::size_t currentLevel)
 {
     std::vector<std::string> result;
     if (!root)
@@ -596,30 +625,30 @@ std::vector<std::string> ATP::atLevelRecursive(Box* root, std::size_t targetLeve
         return {};
     }
 
-    if (currentLevel % 2 == 1 && currentLevel > 1 && currentLevel <= targetLevel && numberOfChildren(objectName, root->data) > 0)
+    if (currentLevel % 2 == 1 && currentLevel > 1 && currentLevel <= targetLevel && numberOfChildren(root->data) > 0)
     {
         result.push_back(root->data);
     }
 
     for (auto& child : root->children)
     {
-        auto childResult = atLevelRecursive(child, targetLevel, currentLevel + 1, objectName);
+        auto childResult = atLevelRecursive(child, targetLevel, currentLevel + 1);
         result.insert(result.end(), childResult.begin(), childResult.end());
     }
 
     return result;
 }
 
-void ATP::modernize(Box* root, const std::string& objectName)
+void ATP::modernize()
 {
-    std::vector<std::string> result = atLevelRecursive(root, 3, 0, objectName);
+    std::vector<std::string> result = atLevelRecursive(this->root, 3, 0);
 
     for (const auto& element : result)
     {
-        std::string father = manager(objectName, element);
-        std::string grandpa = manager(objectName, father);
+        std::string father = manager(element);
+        std::string grandpa = manager(father);
 
-        erase(root, element);
-        hire(root, objectName, element, grandpa);
+        erase(this->root, element);
+        hire(this->root, element, grandpa);
     }
 }

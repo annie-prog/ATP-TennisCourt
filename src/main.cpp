@@ -12,12 +12,10 @@ int main()
 // int main()
 // {
 //     ATP myATP;
-//     Box* tree = myATP.load("ATP", "../../atp.txt");
-//     // myATP.printHierarchy(tree, std::cout);
-
-//     myATP.modernize(tree, "ATP");
-
+//     Box* tree = myATP.load("ATP");
 //     myATP.printHierarchy(tree, std::cout);
+
+//     std::cout << myATP.findEmployee("ATP", "Tsitsipas") << std::endl;
 
 //     return 0;
 // }

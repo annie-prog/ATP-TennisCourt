@@ -47,6 +47,28 @@ private:
     }
 
     void readHierarchy(std::map<std::string, std::vector<std::string>>& relationships, std::istream& input);
+    void sortChildrenRecursively(Box* root);
+    void printToFile(std::istream& input);
+    Box* constructTree(const std::string& rootValue, const std::map<std::string, std::vector<std::string>>& relationships);
+    void constructTreeHelper(Box* root, const std::map<std::string, std::vector<std::string>>& relationships, int depth);
+
+    Box* findEmployee(Box* root, const std::string& element);
+
+    bool findPathHelper(Box* current, const std::string& employeeName, std::vector<std::string>& path);
+
+    std::vector<std::string> getLeaves(const Box* root);
+    void getLeavesHelper(const Box* current, std::vector<std::string>& leaves);
+
+    void getAllEmployeesHelper(Box* root, std::vector<std::string>& employees);
+
+    std::size_t numIndirectEmployees(Box* root, const std::string& manager);
+    std::size_t numIndirectEmployees(const std::string& manager);
+
+    void incorporateHierarchy(Box* root);
+    std::string findHighestSalaryEmployee(Box* root);
+
+    std::vector<std::string> atLevelRecursive(Box* root, std::size_t targetLevel, std::size_t currentLevel);
+
 public:
     ATP();
     ATP(const std::string& name);
@@ -60,52 +82,38 @@ public:
     }
 
     Box* load(const std::string& objectName, const std::string& fileName = "");
-    void sortChildrenRecursively(Box* root);
-    void printToFile(std::istream& input);
-    Box* constructTree(const std::string& rootValue, const std::map<std::string, std::vector<std::string>>& relationships);
-    void constructTreeHelper(Box* root, const std::map<std::string, std::vector<std::string>>& relationships, int depth);
 
     std::string convertTreeToString(Box* root); 
 
-    Box* findEmployee(Box* root, const std::string& element);
-    bool findEmployee(const std::string& objectName, const std::string &element);
+    bool findEmployee(const std::string &element);
 
-    void save(const std::string& objectName, const std::string& fileName);
+    void save(const std::string& fileName = "");
     void printHierarchy(Box* root, std::ostream& output, int depth = 0);
 
-    std::size_t numberOfChildren(const std::string &objectName, const std::string &x);
+    std::size_t numberOfChildren(const std::string &element);
 
     std::vector<std::string> findPath(Box* current, const std::string& employeeName);
-    bool findPathHelper(Box* current, const std::string& employeeName, std::vector<std::string>& path);
-
-    std::vector<std::string> getLeaves(const Box* root);
-    void getLeavesHelper(const Box* current, std::vector<std::string>& leaves);
 
     std::size_t sizeLongestPath(Box* current);
 
-    std::string manager(const std::string& objectName, const std::string& employeeName);
+    std::string manager(const std::string& employeeName);
 
-    std::size_t numEmployees(const std::string &objectName);
-    std::size_t numEmployees(const std::string& objectName, Box* root);
+    std::size_t numEmployees();
+    std::size_t numEmployees(Box* root);
 
-    std::size_t overloaded(const std::string& objectName);
     std::vector<std::string> getAllEmployees(Box* root);
-    void getAllEmployeesHelper(Box* root, std::vector<std::string>& employees);
+
+    std::size_t overloaded();
 
     void erase(Box*& root, const std::string &element);
-    void hire(Box* root, const std::string& objectName, const std::string& employee, const std::string& newManager);
+    void erase(const std::string &element);
 
-    std::size_t salary(Box* root, const std::string& objectName, const std::string& employee);
+    void hire(Box* root, const std::string& employee, const std::string& newManager);
+    void hire(const std::string& employee, const std::string& newManager);
 
-    std::size_t numIndirectEmployees(const std::string& objectName, Box* root, const std::string& manager);
+    std::size_t salary(const std::string& employee);
 
-    void incorporate(const std::string& objectName);
-    void incorporateHierarchy(Box* root, const std::string& objectName);
-    std::string findHighestSalaryEmployee(Box* root, const std::string& objectName);
+    void incorporate();
 
-    std::vector<std::string> atLevelRecursive(Box* root, std::size_t targetLevel, std::size_t currentLevel, const std::string& objectName);
-    void modernize(Box* root, const std::string& objectName);
-
-    Box* findHigherLeader(Box* root, std::size_t currentLevel) const;
-    Box* findParent(Box* root, const std::string& data) const;
+    void modernize();
 };
