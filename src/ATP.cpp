@@ -89,8 +89,8 @@ Box* ATP::load(const std::string& objectName, const std::string& fileName)
     {
         if(!CommonMethods::isValidSymbol(objectName[i]))
         {
-            std::cerr << objectName << " is invalid object name" << std::endl;
-            std::exit(-1);
+            std::cout << objectName << " is invalid object name" << std::endl;
+            return {};
         }
     }
 
@@ -111,7 +111,6 @@ Box* ATP::load(const std::string& objectName, const std::string& fileName)
         }
         else
         {
-            FileUtils::ClearTextFiles(fileName1);
             return nullptr;
         } 
     }
@@ -256,7 +255,9 @@ std::size_t ATP::numberOfChildren(const std::string &element)
     std::size_t numChildren = 0;
  
     if (!root)
+    {
         return 0;
+    }
  
     std::queue<Box*> q;
     q.push(root);
@@ -276,7 +277,9 @@ std::size_t ATP::numberOfChildren(const std::string &element)
             }
 
             for (int i = 0; i < p->children.size(); i++)
+            {
                 q.push(p->children[i]);
+            }
             n--;
         }
     }
@@ -345,14 +348,14 @@ bool ATP::findPathHelper(Box* current, const std::string& employeeName, std::vec
     return false;
 }
 
-std::vector<std::string> ATP::getLeaves(const Box* root)
+std::vector<std::string> ATP::getLeaves(Box* root)
 {
     std::vector<std::string> leaves;
     getLeavesHelper(root, leaves);
     return leaves;
 }
 
-void ATP::getLeavesHelper(const Box* current, std::vector<std::string>& leaves)
+void ATP::getLeavesHelper(Box* current, std::vector<std::string>& leaves)
 {
     if (!current)
     {
@@ -388,6 +391,12 @@ std::size_t ATP::sizeLongestPath(Box* current)
 
     return longestPath.size();
 }
+
+std::size_t ATP::sizeLongestPath()
+{
+    return sizeLongestPath(root);
+}
+
 
 std::string ATP::manager(const std::string& employeeName)
 {
@@ -651,4 +660,38 @@ void ATP::modernize()
         erase(this->root, element);
         hire(this->root, element, grandpa);
     }
+}
+
+Box* ATP::join(Box* root1, Box* root2)
+{
+    if (!root1 && !root2) 
+    {
+        return nullptr;
+    }
+
+    std::string newData = (root1 ? root1->data : root2->data);
+    std::vector<Box*> newChildren;
+
+    if (root1 && root2)
+    {
+        size_t maxSize = std::max(root1->children.size(), root2->children.size());
+        newChildren.reserve(maxSize);
+
+        for (size_t i = 0; i < maxSize; i++)
+        {
+            Box* child1 = (i < root1->children.size() ? root1->children[i] : nullptr);
+            Box* child2 = (i < root2->children.size() ? root2->children[i] : nullptr);
+            newChildren.push_back(join(child1, child2));
+        }
+    }
+    else if (root1) 
+    {
+        newChildren = root1->children;
+    } 
+    else if (root2) 
+    {
+        newChildren = root2->children;
+    }
+
+    return new Box(newData, newChildren);
 }

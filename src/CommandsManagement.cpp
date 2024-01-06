@@ -13,10 +13,10 @@ void CommandsApp::Run()
 }
 void CommandsApp::PrintWelcomeMessage() 
 {
-    std::cout << "°°°°°°°°°°°°°°°°°°°°°°°°" << std::endl;
+    std::cout << "°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°" << std::endl;
     std::cout << "Welcome to our Association of Professional Tennis Players system! " << std::endl;
     std::cout << "Type 'help' for a list of supported commands." << std::endl;
-    std::cout << "°°°°°°°°°°°°°°°°°°°°°°°°" << std::endl;
+    std::cout << "°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°" << std::endl;
 }
 std::string CommandsApp::GetUserInput() 
 {
@@ -232,6 +232,35 @@ void CommandsApp::ProcessOverloadedCommand(const std::vector<std::string>& token
     }
 }
 
+void CommandsApp::ProcessJoinCommand(const std::vector<std::string>& tokens) 
+{
+    if (tokens.size() < 4) 
+    {
+        std::cout << "Please provide a file path to save as." << std::endl;
+        return;
+    }
+
+    std::string objectName1 = tokens[1];
+    std::string objectName2 = tokens[2];
+    std::string objectName3 = tokens[3];
+
+    ATP* currentATP1 = GetATPByName(objectName1);
+    ATP* currentATP2 = GetATPByName(objectName2);
+
+    if (currentATP1 && currentATP2)
+    {
+        ATP currentATP3(objectName3);
+
+        Box* joinedTree = currentATP3.join(currentATP1->getRoot(), currentATP2->getRoot());
+        atpObjects.push_back(currentATP3);
+        std::cout << objectName3 << " created. " << std::endl;
+    }
+    else
+    {
+        std::cout << "One or both of the offices are unknown!" << std::endl;
+    }
+}
+
 void CommandsApp::ProcessFireCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
@@ -404,11 +433,6 @@ void CommandsApp::ProcessExitCommand()
         std::cout << "Exiting the program without saving. Goodbye!" << std::endl;
         std::exit(0);
     } 
-    else 
-    {
-        std::cout << "Invalid response. Exiting the program without saving. Goodbye!" << std::endl;
-        std::exit(0);
-    }
 }
 
 void CommandsApp::ProcessCommand(const std::string& input) 
@@ -448,6 +472,10 @@ void CommandsApp::ProcessCommand(const std::string& input)
     else if (command == "overloaded") 
     {
         ProcessOverloadedCommand(tokens);
+    }
+    else if (command == "join") 
+    {
+        ProcessJoinCommand(tokens);
     }
     else if (command == "fire") 
     {

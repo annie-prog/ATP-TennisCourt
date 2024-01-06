@@ -13,24 +13,27 @@ public:
     void Run();
     void PrintWelcomeMessage();
     std::string GetUserInput();
-    void ProcessCommand(const std::string& input); // works
+    void ProcessCommand(const std::string& input); 
 
-    Box* ProcessLoadCommand(const std::vector<std::string>& tokens); // works
-    void ProcessFindCommand(const std::vector<std::string>& tokens); // works
-    void ProcessNumSubordinatesCommand(const std::vector<std::string>& tokens); // works
-    void ProcessManagerCommand(const std::vector<std::string>& tokens); // works
-    void ProcessNumEmployeesCommand(const std::vector<std::string>& tokens); // works
-    void ProcessOverloadedCommand(const std::vector<std::string>& tokens); // works
-    void ProcessFireCommand(const std::vector<std::string>& tokens); // works
-    void ProcessHireCommand(const std::vector<std::string>& tokens); // works
-    void ProcessSalaryCommand(const std::vector<std::string>& tokens); // works
+    Box* ProcessLoadCommand(const std::vector<std::string>& tokens);
+    void ProcessFindCommand(const std::vector<std::string>& tokens); 
+    void ProcessNumSubordinatesCommand(const std::vector<std::string>& tokens); 
+    void ProcessManagerCommand(const std::vector<std::string>& tokens); 
+    void ProcessNumEmployeesCommand(const std::vector<std::string>& tokens); 
+    void ProcessOverloadedCommand(const std::vector<std::string>& tokens);
 
-    void ProcessIncorporateCommand(const std::vector<std::string>& tokens); // works
-    void ProcessModernizeCommand(const std::vector<std::string>& tokens); // works
+    void ProcessJoinCommand(const std::vector<std::string>& tokens); // does not work
 
-    void ProcessSaveCommand(const std::vector<std::string>& tokens); // works
-    void PrintHelp(); // works
+    void ProcessFireCommand(const std::vector<std::string>& tokens);
+    void ProcessHireCommand(const std::vector<std::string>& tokens);
+    void ProcessSalaryCommand(const std::vector<std::string>& tokens);
+
+    void ProcessIncorporateCommand(const std::vector<std::string>& tokens);
+    void ProcessModernizeCommand(const std::vector<std::string>& tokens);
+
+    void ProcessSaveCommand(const std::vector<std::string>& tokens);
+    void PrintHelp();
     void ProcessExitCommand(); 
 
-    ATP* GetATPByName(const std::string& objectName); // works
+    ATP* GetATPByName(const std::string& objectName);
 };

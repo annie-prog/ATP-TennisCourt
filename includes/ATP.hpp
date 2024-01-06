@@ -56,8 +56,8 @@ private:
 
     bool findPathHelper(Box* current, const std::string& employeeName, std::vector<std::string>& path);
 
-    std::vector<std::string> getLeaves(const Box* root);
-    void getLeavesHelper(const Box* current, std::vector<std::string>& leaves);
+    std::vector<std::string> getLeaves(Box* root);
+    void getLeavesHelper(Box* current, std::vector<std::string>& leaves);
 
     void getAllEmployeesHelper(Box* root, std::vector<std::string>& employees);
 
@@ -80,6 +80,16 @@ public:
     {
         return this->name;
     }
+    
+    Box* getRoot()
+    {
+        return this->root;
+    }
+
+    void ATP::setRoot(Box* newRoot)
+    {
+        root = newRoot;
+    }
 
     Box* load(const std::string& objectName, const std::string& fileName = "");
 
@@ -93,6 +103,8 @@ public:
     std::size_t numberOfChildren(const std::string &element);
 
     std::vector<std::string> findPath(Box* current, const std::string& employeeName);
+
+    std::size_t sizeLongestPath();
 
     std::size_t sizeLongestPath(Box* current);
 
@@ -116,4 +128,6 @@ public:
     void incorporate();
 
     void modernize();
+
+    Box* join(Box* root1, Box* root2);
 };
