@@ -2,23 +2,23 @@
 #include <iostream>
 #include <vector>
 
-void CommandsApp::Run() 
+void CommandsApp::run() 
 {
-    PrintWelcomeMessage();
+    printWelcomeMessage();
     while (true) 
     {
-        std::string input = GetUserInput();
-        ProcessCommand(input);
+        std::string input = getUserInput();
+        processCommand(input);
     }
 }
-void CommandsApp::PrintWelcomeMessage() 
+void CommandsApp::printWelcomeMessage() 
 {
     std::cout << "°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°" << std::endl;
     std::cout << "Welcome to our Association of Professional Tennis Players system! " << std::endl;
     std::cout << "Type 'help' for a list of supported commands." << std::endl;
     std::cout << "°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°" << std::endl;
 }
-std::string CommandsApp::GetUserInput() 
+std::string CommandsApp::getUserInput() 
 {
     std::string input;
     std::cout << "> ";
@@ -26,7 +26,7 @@ std::string CommandsApp::GetUserInput()
     return input;
 }
 
-void CommandsApp::PrintHelp() 
+void CommandsApp::printHelp() 
 {
     std::cout << "The following commands are supported:" << std::endl;
     std::cout << "load <object_name> [<file_name>]                                         loads hierarchy data from a file with the supplied name and creates a tree associated with <object_name>." << std::endl;
@@ -45,7 +45,7 @@ void CommandsApp::PrintHelp()
     std::cout << "exit                                                                     exits the program" << std::endl;
 }
 
-ATP* CommandsApp::GetATPByName(const std::string& objectName)
+ATP* CommandsApp::getATPByName(const std::string& objectName)
 {
     for (ATP& atp : atpObjects)
     {
@@ -57,7 +57,7 @@ ATP* CommandsApp::GetATPByName(const std::string& objectName)
     return nullptr;
 }
 
-Box* CommandsApp::ProcessLoadCommand(const std::vector<std::string>& tokens) 
+Box* CommandsApp::processLoadCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -92,7 +92,7 @@ Box* CommandsApp::ProcessLoadCommand(const std::vector<std::string>& tokens)
     return tree;
 }
 
-void CommandsApp::ProcessFindCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processFindCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -103,7 +103,7 @@ void CommandsApp::ProcessFindCommand(const std::vector<std::string>& tokens)
     std::string objectName = tokens[1];
     std::string employeeName = tokens[2];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (!currentATP)
     {
         std::cerr << objectName << " is an unknown office! " << std::endl;
@@ -120,7 +120,7 @@ void CommandsApp::ProcessFindCommand(const std::vector<std::string>& tokens)
     }
 }
 
-void CommandsApp::ProcessSaveCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processSaveCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -131,7 +131,7 @@ void CommandsApp::ProcessSaveCommand(const std::vector<std::string>& tokens)
     std::string objectName = tokens[1];
     std::string filePath = (tokens.size() > 2) ? tokens[2] : "";
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (!currentATP)
     {
         std::cerr << objectName << " is an unknown office! " << std::endl;
@@ -142,7 +142,7 @@ void CommandsApp::ProcessSaveCommand(const std::vector<std::string>& tokens)
     std::cout << objectName << " saved." << std::endl;
 }
 
-void CommandsApp::ProcessNumSubordinatesCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processNumSubordinatesCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -153,7 +153,7 @@ void CommandsApp::ProcessNumSubordinatesCommand(const std::vector<std::string>& 
     std::string objectName = tokens[1];
     std::string employeeName = tokens[2];
     
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if(!currentATP->findEmployee(employeeName))
     {
         std::cout << employeeName << " is not in " << objectName << "." << std::endl;
@@ -164,7 +164,7 @@ void CommandsApp::ProcessNumSubordinatesCommand(const std::vector<std::string>& 
     std::cout << employeeName << " has " << CommonMethods::numberToWords(result) << " subordinates." << std::endl;
 }
 
-void CommandsApp::ProcessManagerCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processManagerCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -175,7 +175,7 @@ void CommandsApp::ProcessManagerCommand(const std::vector<std::string>& tokens)
     std::string objectName = tokens[1];
     std::string employeeName = tokens[2];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     std::string result = currentATP->manager(employeeName);
     
     if (!result.empty())
@@ -188,7 +188,7 @@ void CommandsApp::ProcessManagerCommand(const std::vector<std::string>& tokens)
     }
 }
 
-void CommandsApp::ProcessNumEmployeesCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processNumEmployeesCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -198,7 +198,7 @@ void CommandsApp::ProcessNumEmployeesCommand(const std::vector<std::string>& tok
 
     std::string objectName = tokens[1];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (currentATP)
     {
         std::size_t result = currentATP->numEmployees();
@@ -210,7 +210,7 @@ void CommandsApp::ProcessNumEmployeesCommand(const std::vector<std::string>& tok
     }
 }
 
-void CommandsApp::ProcessOverloadedCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processOverloadedCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -220,7 +220,7 @@ void CommandsApp::ProcessOverloadedCommand(const std::vector<std::string>& token
 
     std::string objectName = tokens[1];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (currentATP)
     {
         std::size_t result = currentATP->overloaded();
@@ -232,7 +232,7 @@ void CommandsApp::ProcessOverloadedCommand(const std::vector<std::string>& token
     }
 }
 
-void CommandsApp::ProcessJoinCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processJoinCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 4) 
     {
@@ -244,8 +244,8 @@ void CommandsApp::ProcessJoinCommand(const std::vector<std::string>& tokens)
     std::string objectName2 = tokens[2];
     std::string objectName3 = tokens[3];
 
-    ATP* currentATP1 = GetATPByName(objectName1);
-    ATP* currentATP2 = GetATPByName(objectName2);
+    ATP* currentATP1 = getATPByName(objectName1);
+    ATP* currentATP2 = getATPByName(objectName2);
 
     if (currentATP1 && currentATP2)
     {
@@ -261,7 +261,7 @@ void CommandsApp::ProcessJoinCommand(const std::vector<std::string>& tokens)
     }
 }
 
-void CommandsApp::ProcessFireCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processFireCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -272,7 +272,7 @@ void CommandsApp::ProcessFireCommand(const std::vector<std::string>& tokens)
     std::string objectName = tokens[1];
     std::string employeeName = tokens[2];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (currentATP)
     {
         if(!currentATP->findEmployee(employeeName))
@@ -298,7 +298,7 @@ void CommandsApp::ProcessFireCommand(const std::vector<std::string>& tokens)
     }
 }
 
-void CommandsApp::ProcessHireCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processHireCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 3) 
     {
@@ -310,7 +310,7 @@ void CommandsApp::ProcessHireCommand(const std::vector<std::string>& tokens)
     std::string employeeName = tokens[2];
     std::string newManagerName = tokens[3];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (currentATP)
     {
         if(!currentATP->findEmployee(newManagerName))
@@ -336,7 +336,7 @@ void CommandsApp::ProcessHireCommand(const std::vector<std::string>& tokens)
     }
 }
 
-void CommandsApp::ProcessSalaryCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processSalaryCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -347,7 +347,7 @@ void CommandsApp::ProcessSalaryCommand(const std::vector<std::string>& tokens)
     std::string objectName = tokens[1];
     std::string employeeName = tokens[2];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (currentATP)
     {
         if(!currentATP->findEmployee(employeeName))
@@ -365,7 +365,7 @@ void CommandsApp::ProcessSalaryCommand(const std::vector<std::string>& tokens)
     }
 }
 
-void CommandsApp::ProcessIncorporateCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processIncorporateCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -375,7 +375,7 @@ void CommandsApp::ProcessIncorporateCommand(const std::vector<std::string>& toke
 
     std::string objectName = tokens[1];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (currentATP)
     {
         currentATP->incorporate();
@@ -387,7 +387,7 @@ void CommandsApp::ProcessIncorporateCommand(const std::vector<std::string>& toke
     }
 }
 
-void CommandsApp::ProcessModernizeCommand(const std::vector<std::string>& tokens) 
+void CommandsApp::processModernizeCommand(const std::vector<std::string>& tokens) 
 {
     if (tokens.size() < 2) 
     {
@@ -397,7 +397,7 @@ void CommandsApp::ProcessModernizeCommand(const std::vector<std::string>& tokens
 
     std::string objectName = tokens[1];
 
-    ATP* currentATP = GetATPByName(objectName);
+    ATP* currentATP = getATPByName(objectName);
     if (currentATP)
     {
         currentATP->modernize();
@@ -409,7 +409,7 @@ void CommandsApp::ProcessModernizeCommand(const std::vector<std::string>& tokens
     }
 }
 
-void CommandsApp::ProcessExitCommand() 
+void CommandsApp::processExitCommand() 
 {
     std::string response;
     std::cout << "ATP is modified, but not saved. Do you want to save changes before exiting? (yes/no): ";
@@ -435,7 +435,7 @@ void CommandsApp::ProcessExitCommand()
     } 
 }
 
-void CommandsApp::ProcessCommand(const std::string& input) 
+void CommandsApp::processCommand(const std::string& input) 
 {
     std::vector<std::string> tokens = CommonMethods::split(input, ' ');
 
@@ -447,63 +447,63 @@ void CommandsApp::ProcessCommand(const std::string& input)
 
     if (command == "save") 
     {
-        ProcessSaveCommand(tokens);
+        processSaveCommand(tokens);
     }
     else if (command == "load") 
     {
-        ProcessLoadCommand(tokens);
+        processLoadCommand(tokens);
     }
     else if (command == "find") 
     {
-        ProcessFindCommand(tokens);
+        processFindCommand(tokens);
     }
     else if (command == "num_subordinates") 
     {
-        ProcessNumSubordinatesCommand(tokens);
+        processNumSubordinatesCommand(tokens);
     }
     else if (command == "manager") 
     {
-        ProcessManagerCommand(tokens);
+        processManagerCommand(tokens);
     }
     else if (command == "num_employees") 
     {
-        ProcessNumEmployeesCommand(tokens);
+        processNumEmployeesCommand(tokens);
     }
     else if (command == "overloaded") 
     {
-        ProcessOverloadedCommand(tokens);
+        processOverloadedCommand(tokens);
     }
     else if (command == "join") 
     {
-        ProcessJoinCommand(tokens);
+        processJoinCommand(tokens);
     }
     else if (command == "fire") 
     {
-        ProcessFireCommand(tokens);
+        processFireCommand(tokens);
     }
     else if (command == "hire") 
     {
-        ProcessHireCommand(tokens);
+        processHireCommand(tokens);
     }
     else if (command == "salary") 
     {
-        ProcessSalaryCommand(tokens);
+        processSalaryCommand(tokens);
     }
     else if (command == "incorporate") 
     {
-        ProcessIncorporateCommand(tokens);
+        processIncorporateCommand(tokens);
     }
     else if (command == "modernize") 
     {
-        ProcessModernizeCommand(tokens);
+        processModernizeCommand(tokens);
     }
     else if (command == "help") 
     {
-        PrintHelp();
+        printHelp();
     }
     else if (command == "exit") 
     {
-        ProcessExitCommand();
+        processExitCommand();
     }
     else 
     {

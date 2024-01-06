@@ -7,7 +7,6 @@
 #include <map>
 #include <queue>
 #include "Box.hpp"
-#include "Common.hpp"
 #include "FileUtils.hpp"
 
 class ATP
@@ -24,7 +23,7 @@ private:
         }
 
         std::vector<Box*> buffer;
-        for (std::size_t i = 0; i < root->children.size(); ++i)
+        for (std::size_t i = 0; i < root->children.size(); i++)
         {
             buffer.push_back(copy(root->children[i]));
         }
@@ -39,7 +38,7 @@ private:
             return;
         }
 
-        for (std::size_t i = 0; i < root->children.size(); ++i)
+        for (std::size_t i = 0; i < root->children.size(); i++)
         {
             deallocate(root->children[i]);
         }
@@ -49,17 +48,22 @@ private:
     void readHierarchy(std::map<std::string, std::vector<std::string>>& relationships, std::istream& input);
     void sortChildrenRecursively(Box* root);
     void printToFile(std::istream& input);
-    Box* constructTree(const std::string& rootValue, const std::map<std::string, std::vector<std::string>>& relationships);
+    Box* constructTree(const std::string& rootData, const std::map<std::string, std::vector<std::string>>& relationships);
     void constructTreeHelper(Box* root, const std::map<std::string, std::vector<std::string>>& relationships, int depth);
 
     Box* findEmployee(Box* root, const std::string& element);
 
-    bool findPathHelper(Box* current, const std::string& employeeName, std::vector<std::string>& path);
+    bool findPathHelper(Box* root, const std::string& employeeName, std::vector<std::string>& path);
+
+    std::size_t numEmployees(Box* root);
 
     std::vector<std::string> getLeaves(Box* root);
-    void getLeavesHelper(Box* current, std::vector<std::string>& leaves);
+    void getLeavesHelper(Box* root, std::vector<std::string>& leaves);
 
     void getAllEmployeesHelper(Box* root, std::vector<std::string>& employees);
+
+    void erase(Box*& root, const std::string &element);
+    void hire(Box* root, const std::string& employee, const std::string& newManager);
 
     std::size_t numIndirectEmployees(Box* root, const std::string& manager);
     std::size_t numIndirectEmployees(const std::string& manager);
@@ -86,13 +90,7 @@ public:
         return this->root;
     }
 
-    void ATP::setRoot(Box* newRoot)
-    {
-        root = newRoot;
-    }
-
     Box* load(const std::string& objectName, const std::string& fileName = "");
-
     std::string convertTreeToString(Box* root); 
 
     bool findEmployee(const std::string &element);
@@ -102,31 +100,21 @@ public:
 
     std::size_t numberOfChildren(const std::string &element);
 
-    std::vector<std::string> findPath(Box* current, const std::string& employeeName);
-
-    std::size_t sizeLongestPath();
-
-    std::size_t sizeLongestPath(Box* current);
+    std::vector<std::string> findPath(Box* root, const std::string& employeeName);
+    std::size_t sizeLongestPath(Box* root);
 
     std::string manager(const std::string& employeeName);
 
     std::size_t numEmployees();
-    std::size_t numEmployees(Box* root);
-
     std::vector<std::string> getAllEmployees(Box* root);
-
     std::size_t overloaded();
 
-    void erase(Box*& root, const std::string &element);
     void erase(const std::string &element);
-
-    void hire(Box* root, const std::string& employee, const std::string& newManager);
     void hire(const std::string& employee, const std::string& newManager);
 
     std::size_t salary(const std::string& employee);
 
     void incorporate();
-
     void modernize();
 
     Box* join(Box* root1, Box* root2);

@@ -1,6 +1,6 @@
 #include "FileUtils.hpp"
 
-void FileUtils::ClearTextFiles(const std::string& filename) 
+void FileUtils::clearTextFiles(const std::string& filename) 
 {
     std::ofstream file(filename);
     file.close();
@@ -8,7 +8,7 @@ void FileUtils::ClearTextFiles(const std::string& filename)
 
 bool FileUtils::areValidRelation(const std::string& relation, std::unordered_map<std::string, std::string>& subordinateMap) 
 {
-    std::vector<std::string> encounteredEmployees; // vector for all employees so we can check if we have encounter an employee more than once
+    std::vector<std::string> encounteredEmployees;
 
     std::string manager, employee;
     bool separatorFound = false;

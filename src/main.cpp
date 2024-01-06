@@ -253,7 +253,7 @@
 int main() 
 {
     CommandsApp commandsApp;
-    commandsApp.Run();
+    commandsApp.run();
 
     return 0;
 }

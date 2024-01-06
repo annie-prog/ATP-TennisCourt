@@ -1,6 +1,5 @@
 #pragma once
 
-#include "FileUtils.hpp"
 #include "ATP.hpp"
 
 class CommandsApp
@@ -10,30 +9,30 @@ private:
 
 public:
     CommandsApp() = default;
-    void Run();
-    void PrintWelcomeMessage();
-    std::string GetUserInput();
-    void ProcessCommand(const std::string& input); 
+    void run();
+    void printWelcomeMessage();
+    std::string getUserInput();
+    void processCommand(const std::string& input); 
 
-    Box* ProcessLoadCommand(const std::vector<std::string>& tokens);
-    void ProcessFindCommand(const std::vector<std::string>& tokens); 
-    void ProcessNumSubordinatesCommand(const std::vector<std::string>& tokens); 
-    void ProcessManagerCommand(const std::vector<std::string>& tokens); 
-    void ProcessNumEmployeesCommand(const std::vector<std::string>& tokens); 
-    void ProcessOverloadedCommand(const std::vector<std::string>& tokens);
+    Box* processLoadCommand(const std::vector<std::string>& tokens);
+    void processFindCommand(const std::vector<std::string>& tokens); 
+    void processNumSubordinatesCommand(const std::vector<std::string>& tokens); 
+    void processManagerCommand(const std::vector<std::string>& tokens); 
+    void processNumEmployeesCommand(const std::vector<std::string>& tokens); 
+    void processOverloadedCommand(const std::vector<std::string>& tokens);
 
-    void ProcessJoinCommand(const std::vector<std::string>& tokens); // does not work
+    void processJoinCommand(const std::vector<std::string>& tokens); // does not work
 
-    void ProcessFireCommand(const std::vector<std::string>& tokens);
-    void ProcessHireCommand(const std::vector<std::string>& tokens);
-    void ProcessSalaryCommand(const std::vector<std::string>& tokens);
+    void processFireCommand(const std::vector<std::string>& tokens);
+    void processHireCommand(const std::vector<std::string>& tokens);
+    void processSalaryCommand(const std::vector<std::string>& tokens);
 
-    void ProcessIncorporateCommand(const std::vector<std::string>& tokens);
-    void ProcessModernizeCommand(const std::vector<std::string>& tokens);
+    void processIncorporateCommand(const std::vector<std::string>& tokens);
+    void processModernizeCommand(const std::vector<std::string>& tokens);
 
-    void ProcessSaveCommand(const std::vector<std::string>& tokens);
-    void PrintHelp();
-    void ProcessExitCommand(); 
+    void processSaveCommand(const std::vector<std::string>& tokens);
+    void printHelp();
+    void processExitCommand(); 
 
-    ATP* GetATPByName(const std::string& objectName);
+    ATP* getATPByName(const std::string& objectName);
 };

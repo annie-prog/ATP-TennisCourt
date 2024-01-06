@@ -162,9 +162,9 @@ std::string ATP::convertTreeToString(Box* root)
     return result;
 }
 
-Box* ATP::constructTree(const std::string& rootValue, const std::map<std::string, std::vector<std::string>>& relationships)
+Box* ATP::constructTree(const std::string& rootData, const std::map<std::string, std::vector<std::string>>& relationships)
 {
-    Box* root = new Box(rootValue);
+    Box* root = new Box(rootData);
     constructTreeHelper(root, relationships, 0);
     return root;
 }
@@ -315,28 +315,28 @@ std::size_t ATP::numEmployees()
     return numEmployees(root);
 }
 
-std::vector<std::string> ATP::findPath(Box* current, const std::string& employeeName)
+std::vector<std::string> ATP::findPath(Box* root, const std::string& employeeName)
 {
     std::vector<std::string> path;
-    findPathHelper(current, employeeName, path);
+    findPathHelper(root, employeeName, path);
     return path;
 }
 
-bool ATP::findPathHelper(Box* current, const std::string& employeeName, std::vector<std::string>& path)
+bool ATP::findPathHelper(Box* root, const std::string& employeeName, std::vector<std::string>& path)
 {
-    if (!current)
+    if (!root)
     {
         return false;
     }
 
-    path.push_back(current->data);
+    path.push_back(root->data);
 
-    if (current->data == employeeName)
+    if (root->data == employeeName)
     {
         return true;
     }
 
-    for (Box* child : current->children)
+    for (Box* child : root->children)
     {
         if (findPathHelper(child, employeeName, path))
         {
@@ -355,33 +355,33 @@ std::vector<std::string> ATP::getLeaves(Box* root)
     return leaves;
 }
 
-void ATP::getLeavesHelper(Box* current, std::vector<std::string>& leaves)
+void ATP::getLeavesHelper(Box* root, std::vector<std::string>& leaves)
 {
-    if (!current)
+    if (!root)
     {
         return;
     }
 
-    if (current->children.empty())
+    if (root->children.empty())
     {
-        leaves.push_back(current->data);
+        leaves.push_back(root->data);
     }
     else
     {
-        for (const auto& child : current->children)
+        for (const auto& child : root->children)
         {
             getLeavesHelper(child, leaves);
         }
     }
 }
 
-std::size_t ATP::sizeLongestPath(Box* current)
+std::size_t ATP::sizeLongestPath(Box* root)
 {
-    std::vector<std::string> leaves = this->getLeaves(current);
+    std::vector<std::string> leaves = this->getLeaves(root);
     std::vector<std::string> longestPath;
     for (const auto& leaf : leaves)
     {
-        std::vector<std::string> currentPath = this->findPath(current, leaf);
+        std::vector<std::string> currentPath = this->findPath(root, leaf);
 
         if (currentPath.size() > longestPath.size())
         {
@@ -391,12 +391,6 @@ std::size_t ATP::sizeLongestPath(Box* current)
 
     return longestPath.size();
 }
-
-std::size_t ATP::sizeLongestPath()
-{
-    return sizeLongestPath(root);
-}
-
 
 std::string ATP::manager(const std::string& employeeName)
 {
